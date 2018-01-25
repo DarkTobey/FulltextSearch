@@ -75,27 +75,70 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActivityIndexBuilder.cs" />
-    <Compile Include="ActivityIndexContent.cs" />
-    <Compile Include="ActivityIndexSearch.cs" />
-    <Compile Include="ActivityIndexSearchResultItem.cs" />
-    <Compile Include="ActivityType.cs" />
-    <Compile Include="BaseIndexContent.cs" />
-    <Compile Include="BaseIndexSearch.cs" />
-    <Compile Include="IIndexBuilder.cs" />
-    <Compile Include="IndexContent.cs" />
-    <Compile Include="IndexManager.cs" />
-    <Compile Include="IndexSearch.cs" />
-    <Compile Include="IndexSearchResultItem.cs" />
-    <Compile Include="JiebaForLuceneAnalyzer.cs" />
-    <Compile Include="JiebaForLuceneTokenizer.cs" />
-    <Compile Include="PagedIndexSearchResult.cs" />
+    <Compile Include="EasyImpl\ActivityIndexBuilder.cs" />
+    <Compile Include="EasyImpl\ActivityIndexContent.cs" />
+    <Compile Include="EasyImpl\ActivityIndexSearch.cs" />
+    <Compile Include="EasyImpl\ActivityIndexSearchResultItem.cs" />
+    <Compile Include="EasyImpl\ActivityType.cs" />
+    <Compile Include="EasyImpl\BaseIndexContent.cs" />
+    <Compile Include="EasyImpl\BaseIndexSearch.cs" />
+    <Compile Include="EasyImpl\IIndexBuilder.cs" />
+    <Compile Include="EasyImpl\IndexContent.cs" />
+    <Compile Include="EasyImpl\IndexManager.cs" />
+    <Compile Include="EasyImpl\IndexSearch.cs" />
+    <Compile Include="EasyImpl\IndexSearchResultItem.cs" />
+    <Compile Include="Interface\IAnalyzer.cs" />
+    <Compile Include="Interface\IIndexBuilder.cs" />
+    <Compile Include="Interface\IIndexContent.cs" />
+    <Compile Include="Interface\IIndexManager.cs" />
+    <Compile Include="Interface\IIndexSearcher.cs" />
+    <Compile Include="Interface\ISearchManager.cs" />
+    <Compile Include="Interface\ISearchResult.cs" />
+    <Compile Include="EasyImpl\JiebaForLuceneAnalyzer.cs" />
+    <Compile Include="EasyImpl\JiebaForLuceneTokenizer.cs" />
+    <Compile Include="EasyImpl\PagedIndexSearchResult.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="FullText\JiebaRule\char_state_tab.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="FullText\JiebaRule\pos_prob_emit.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="FullText\JiebaRule\pos_prob_start.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="FullText\JiebaRule\pos_prob_trans.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="FullText\JiebaRule\prob_emit.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="FullText\JiebaRule\prob_trans.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="FullText\Content\" />
+    <Folder Include="FullText\Index\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="FullText\JiebaRule\cn_synonym.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="FullText\JiebaRule\dict.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="FullText\JiebaRule\idf.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="FullText\JiebaRule\stopwords.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
