@@ -79,10 +79,8 @@
     <Compile Include="JiebaAnalyzer.cs" />
     <Compile Include="JiebaTokenizer.cs" />
     <Compile Include="Interface\IAnalyzer.cs" />
-    <Compile Include="Interface\IIndexBuilder.cs" />
-    <Compile Include="Interface\IIndexContent.cs" />
+    <Compile Include="Interface\IRecordInfo.cs" />
     <Compile Include="Interface\IIndexManager.cs" />
-    <Compile Include="Interface\IIndexSearcher.cs" />
     <Compile Include="Interface\ISearchManager.cs" />
     <Compile Include="Interface\ISearchResult.cs" />
     <Compile Include="Program.cs" />
