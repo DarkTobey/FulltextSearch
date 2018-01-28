@@ -73,16 +73,15 @@ namespace Tobey.FulltextSearch.EasyImpl
         /// <param name="fieldSorts">对字段进行排序</param>
         /// <param name="pageIndex">查询结果当前页，默认为1</param>
         /// <param name="pageSize">查询结果每页结果数，默认为20</param>
-        public PagedIndexSearchResult<TIndexSearchResultItem> Search(string content
-            , Dictionary<string, string> filter = null, List<FieldSort> fieldSorts = null
-            , int pageIndex = 1, int pageSize = 20)
+        public PagedIndexSearchResult<TIndexSearchResultItem> Search(string content, Dictionary<string, string> filter = null, List<FieldSort> fieldSorts = null, int pageIndex = 1, int pageSize = 20)
         {
             try
             {
                 if (!string.IsNullOrEmpty(content))
                 {
                     content = ReplaceIndexSensitiveWords(content);
-                    content = GetKeywordsSplitBySpace(content,
+                    content = 
+                        GetKeywordsSplitBySpace(content,
                         new JiebaForLuceneTokenizer(new JiebaSegmenter(), content));
                 }
                 if (string.IsNullOrEmpty(content) || pageIndex < 1)

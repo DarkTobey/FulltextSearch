@@ -8,7 +8,6 @@ using System.IO;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.Tokenattributes;
-using Tobey.FulltextSearch.EasyImpl;
 using Lucene.Net.Index;
 using Lucene.Net.Documents;
 using Lucene.Net.Store;
@@ -20,8 +19,14 @@ namespace Tobey.FulltextSearch
     {
         static void Main(string[] args)
         {
-            Any.CreateIndexByData();
-            Any.SearchFromIndexData("泛型");
+            //Any.CreateIndexByData();
+            //Any.SearchFromIndexData("泛型");
+
+            var records = Utils.GetRecord();
+
+            IndexManager.Instance().Add(records);
+            SearchResult result = SearchManager.Instance().Search("规划法", 0, 10);
+
 
             Console.ReadLine();
         }
@@ -52,7 +57,7 @@ namespace Tobey.FulltextSearch
         {
             string txt = "测试一下结巴分词";
 
-            JiebaForLuceneAnalyzer analyzer = new JiebaForLuceneAnalyzer();
+            JiebaAnalyzer analyzer = new JiebaAnalyzer();
             TokenStream tokenStream = analyzer.TokenStream("", new StringReader(txt));
 
             string result = string.Empty;
@@ -89,7 +94,7 @@ namespace Tobey.FulltextSearch
 
             //IndexWriter:向索引库写入索引 (这里指定使用结巴分词进行切词,不设置最大写入长度)
             //补充:使用IndexWriter打开directory时会自动对索引库文件上锁
-            IndexWriter writer = new IndexWriter(directory, new JiebaForLuceneAnalyzer(), !isExist, IndexWriter.MaxFieldLength.UNLIMITED);
+            IndexWriter writer = new IndexWriter(directory, new JiebaAnalyzer(), !isExist, IndexWriter.MaxFieldLength.UNLIMITED);
 
             //测试数据
             List<Info> contentList = Utils.GetTestTxt();
@@ -208,6 +213,27 @@ namespace Tobey.FulltextSearch
             return result;
         }
 
+        public static List<RecordInfo> GetRecord()
+        {
+            List<RecordInfo> result = new List<RecordInfo>();
+
+            string dir = "E:/总结";
+            DirectoryInfo dirInfo = new DirectoryInfo(dir);
+            foreach (var file in dirInfo.GetFiles("*.txt"))
+            {
+                result.Add(new RecordInfo()
+                {
+                    RowId = CreateID(),
+                    Title = file.Name,
+                    Body = File.ReadAllText(file.FullName),
+                    TableName = "test",
+                    ModuleType = "demo",
+                    CollectTime = DateTime.Now,
+                });
+            }
+            return result;
+        }
+
         /// <summary>
         /// 分词
         /// </summary>
@@ -216,7 +242,7 @@ namespace Tobey.FulltextSearch
         public static string[] SplitWords(string content)
         {
             List<string> result = new List<string>();
-            JiebaForLuceneAnalyzer analyzer = new JiebaForLuceneAnalyzer();
+            JiebaAnalyzer analyzer = new JiebaAnalyzer();
             TokenStream tokenStream = analyzer.TokenStream("", new StringReader(content));
 
             bool hasNext;
@@ -240,14 +266,21 @@ namespace Tobey.FulltextSearch
         public static string HightLight(string keyword, string content)
         {
             //创建HTMLFormatter,参数为高亮单词的前后缀
-            PanGu.HighLight.SimpleHTMLFormatter simpleHTMLFormatter =
-                new PanGu.HighLight.SimpleHTMLFormatter("<em>", "<em>");
+            PanGu.HighLight.SimpleHTMLFormatter simpleHTMLFormatter = new PanGu.HighLight.SimpleHTMLFormatter("<em>", "<em>");
+
             //创建 Highlighter ，输入HTMLFormatter 和 盘古分词对象Semgent
             PanGu.HighLight.Highlighter highlighter = new PanGu.HighLight.Highlighter(simpleHTMLFormatter, new PanGu.Segment());
+
             //设置每个摘要段的字符数
             highlighter.FragmentSize = 1000;
+
             //获取最匹配的摘要段
             return highlighter.GetBestFragment(keyword, content);
+        }
+
+        public static string CreateID()
+        {
+            return Guid.NewGuid().ToString("N");
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Tobey.FulltextSearch.Interface
 {
-    class ISearchManager
+    public interface ISearchManager
     {
     }
 }
