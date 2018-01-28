@@ -41,12 +41,12 @@ namespace Tobey.FulltextSearch
             _Formatter = formatter;
         }
 
-        public SearchResult Search(string keywords, int start, int length)
+        public SearchResult<RecordInfo> Search(string keywords, int start, int length)
         {
             return Search(keywords, null, null, null, start, length);
         }
 
-        public SearchResult Search(string keywords, string[] fields, Dictionary<string, string> filters, List<ResultOrderBy> sorts, int start, int length)
+        public SearchResult<RecordInfo> Search(string keywords, string[] fields, Dictionary<string, string> filters, List<ResultOrderBy> sorts, int start, int length)
         {
             if (string.IsNullOrEmpty(keywords))
                 return null;
@@ -97,7 +97,7 @@ namespace Tobey.FulltextSearch
             Console.Write("检索耗时:" + stopWatch.ElapsedMilliseconds * 1.0 / 1000 + "秒");
 
 
-            return new SearchResult
+            return new SearchResult<RecordInfo>
             {
                 Start = start,
                 Length = length,

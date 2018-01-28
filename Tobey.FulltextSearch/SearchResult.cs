@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Tobey.FulltextSearch
 {
-    public class SearchResult
+    public class SearchResult<T>
     {
         public int Start { get; set; }
 
@@ -15,7 +15,7 @@ namespace Tobey.FulltextSearch
 
         public int Total { get; set; }
 
-        public IEnumerable<RecordInfo> Data { get; set; }
+        public IEnumerable<T> Data { get; set; }
     }
 
     public class ResultOrderBy

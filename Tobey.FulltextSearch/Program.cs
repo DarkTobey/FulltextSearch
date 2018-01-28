@@ -25,7 +25,7 @@ namespace Tobey.FulltextSearch
             var records = Utils.GetRecord();
 
             IndexManager.Instance().Add(records);
-            SearchResult result = SearchManager.Instance().Search("规划法", 0, 10);
+            SearchResult<RecordInfo> result = SearchManager.Instance().Search("规划法", 0, 10);
 
 
             Console.ReadLine();
