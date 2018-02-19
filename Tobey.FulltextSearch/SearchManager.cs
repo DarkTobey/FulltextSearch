@@ -93,6 +93,7 @@ namespace Tobey.FulltextSearch
                 data.Add(info);
             }
 
+
             stopWatch.Stop();
             Console.Write("检索耗时:" + stopWatch.ElapsedMilliseconds * 1.0 / 1000 + "秒");
 

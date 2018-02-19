@@ -19,41 +19,31 @@ namespace Tobey.FulltextSearch
     {
         static void Main(string[] args)
         {
-            //Any.CreateIndexByData();
-            //Any.SearchFromIndexData("泛型");
-
-            var records = Utils.GetRecord();
+            List<RecordInfo> records = new List<RecordInfo>();
+            DirectoryInfo dirInfo = new DirectoryInfo("E:/总结");
+            foreach (var file in dirInfo.GetFiles("*.txt"))
+            {
+                records.Add(new RecordInfo()
+                {
+                    RowId = Guid.NewGuid().ToString("N"),
+                    Title = file.Name,
+                    Body = File.ReadAllText(file.FullName),
+                    TableName = "test",
+                    ModuleType = "demo",
+                    CollectTime = DateTime.Now,
+                });
+            }
 
             IndexManager.Instance().Add(records);
-            SearchResult<RecordInfo> result = SearchManager.Instance().Search("规划法", 0, 10);
-
+            SearchResult<RecordInfo> result = SearchManager.Instance().Search("测试", 0, 10);
 
             Console.ReadLine();
         }
     }
 
-    class Any
+    class Demo
     {
-        public static void NeiZhiFenCi()
-        {
-            string txt = "标准分词,一元分词";
-
-            Analyzer analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30);
-            TokenStream tokenStream = analyzer.TokenStream("", new StringReader(txt));
-
-            string result = string.Empty;
-            bool hasNext;
-            ITermAttribute ita;
-            while (hasNext = tokenStream.IncrementToken())
-            {
-                ita = tokenStream.GetAttribute<ITermAttribute>();
-                result += ita.Term + " | ";
-                hasNext = tokenStream.IncrementToken();
-            }
-            Console.WriteLine(result);
-        }
-
-        public static void JieBaFenCi()
+        static void JieBaTest()
         {
             string txt = "测试一下结巴分词";
 
@@ -72,7 +62,7 @@ namespace Tobey.FulltextSearch
             Console.WriteLine(result);
         }
 
-        public static void CreateIndexByData()
+        static void CreateIndexByData()
         {
             //索引文档保存位置  
             string indexPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "FullText/IndexData");
@@ -97,10 +87,10 @@ namespace Tobey.FulltextSearch
             IndexWriter writer = new IndexWriter(directory, new JiebaAnalyzer(), !isExist, IndexWriter.MaxFieldLength.UNLIMITED);
 
             //测试数据
-            List<Info> contentList = Utils.GetTestTxt();
+            List<Info> contentList = GetTestTxt();
 
             //遍历数据源 将数据转换成为文档对象 存入索引库
-            foreach (var book in contentList)
+            foreach (var info in contentList)
             {
                 //文档对象，一条记录对应索引库中的一个文档
                 Document document = new Document();
@@ -119,11 +109,11 @@ namespace Tobey.FulltextSearch
 
                 //WITH_POSITIONS_OFFSETS:指示不仅保存分割后的词 还保存词之间的距离
 
-                document.Add(new Field("ID", book.ID.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+                document.Add(new Field("ID", info.ID.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 
-                document.Add(new Field("Title", book.Title, Field.Store.YES, Field.Index.ANALYZED));
+                document.Add(new Field("Title", info.Title, Field.Store.YES, Field.Index.ANALYZED));
 
-                document.Add(new Field("Body", book.Body, Field.Store.YES, Field.Index.ANALYZED));
+                document.Add(new Field("Body", info.Body, Field.Store.YES, Field.Index.ANALYZED));
 
                 writer.AddDocument(document); //文档写入索引库
             }
@@ -135,7 +125,7 @@ namespace Tobey.FulltextSearch
             directory.Close();
         }
 
-        public static void SearchFromIndexData(string searchKey)
+        static void SearchFromIndexData(string searchKey)
         {
             //索引文档保存位置  
             string indexPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "FullText/IndexData");
@@ -148,7 +138,7 @@ namespace Tobey.FulltextSearch
             PhraseQuery query = new PhraseQuery();
 
             //把用户输入的关键字进行分词
-            string[] words = Utils.SplitWords(searchKey);
+            string[] words = SplitWords(searchKey);
             foreach (string word in words)
             {
                 query.Add(new Term("Body", word));
@@ -176,26 +166,14 @@ namespace Tobey.FulltextSearch
                 Info book = new Info();
                 book.ID = doc.Get("ID");
                 book.Title = doc.Get("Title");
-                book.Body = Utils.HightLight(searchKey, doc.Get("Body"));//搜索关键字高亮显示 使用盘古提供高亮插件
+                book.Body = HightLight(searchKey, doc.Get("Body"));//搜索关键字高亮显示 使用盘古提供高亮插件
 
                 bookResult.Add(book);
             }
 
         }
-    }
 
-    class Info
-    {
-        public string ID { get; set; }
-
-        public string Title { get; set; }
-
-        public string Body { get; set; }
-    }
-
-    class Utils
-    {
-        public static List<Info> GetTestTxt()
+        static List<Info> GetTestTxt()
         {
             List<Info> result = new List<Info>();
 
@@ -213,33 +191,12 @@ namespace Tobey.FulltextSearch
             return result;
         }
 
-        public static List<RecordInfo> GetRecord()
-        {
-            List<RecordInfo> result = new List<RecordInfo>();
-
-            string dir = "E:/总结";
-            DirectoryInfo dirInfo = new DirectoryInfo(dir);
-            foreach (var file in dirInfo.GetFiles("*.txt"))
-            {
-                result.Add(new RecordInfo()
-                {
-                    RowId = CreateID(),
-                    Title = file.Name,
-                    Body = File.ReadAllText(file.FullName),
-                    TableName = "test",
-                    ModuleType = "demo",
-                    CollectTime = DateTime.Now,
-                });
-            }
-            return result;
-        }
-
         /// <summary>
         /// 分词
         /// </summary>
         /// <param name="content"></param>
         /// <returns></returns>
-        public static string[] SplitWords(string content)
+        static string[] SplitWords(string content)
         {
             List<string> result = new List<string>();
             JiebaAnalyzer analyzer = new JiebaAnalyzer();
@@ -258,12 +215,12 @@ namespace Tobey.FulltextSearch
         }
 
         /// <summary>
-        /// 搜索结果高亮显示
+        /// 搜索结果中关键词高亮显示
         /// </summary>
-        /// <param name="keyword"> 关键字 </param>
-        /// <param name="content"> 搜索结果 </param>
-        /// <returns> 高亮后结果 </returns>
-        public static string HightLight(string keyword, string content)
+        /// <param name="keyword"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        static string HightLight(string keyword, string content)
         {
             //创建HTMLFormatter,参数为高亮单词的前后缀
             PanGu.HighLight.SimpleHTMLFormatter simpleHTMLFormatter = new PanGu.HighLight.SimpleHTMLFormatter("<em>", "<em>");
@@ -278,9 +235,13 @@ namespace Tobey.FulltextSearch
             return highlighter.GetBestFragment(keyword, content);
         }
 
-        public static string CreateID()
+        class Info
         {
-            return Guid.NewGuid().ToString("N");
+            public string ID { get; set; }
+
+            public string Title { get; set; }
+
+            public string Body { get; set; }
         }
     }
 }
